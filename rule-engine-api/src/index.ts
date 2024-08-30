@@ -17,6 +17,16 @@ const rule2 = RuleModel.create('humidity', '>=', 70, 'high-humidity-alert', 'The
 ruleEngine.addRule(rule1);
 ruleEngine.addRule(rule2);
 
+app.post('/rules', async (req: Request, res, Response) => {
+    const { title, operation, value, title_alert, alert_message
+    } = req.body;
+
+    const createRule = RuleModel.create(title, operation, value, title_alert, alert_message)
+    ruleEngine.addRule(createRule);
+    console.log(`Add rules ${title} already`)
+    res.json({ message: `Add rules ${title} already` })
+})
+
 app.post('/evaluate', async (req: Request, res: Response) => {
     const facts = req.body;
 
