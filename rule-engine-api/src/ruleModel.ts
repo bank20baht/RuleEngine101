@@ -1,8 +1,10 @@
-// ruleModel.js
+// src/ruleModel.ts
 
-const { Engine } = require('json-rules-engine');
+import { Engine, RuleProperties } from 'json-rules-engine';
 
 class RuleModel {
+    private engine: Engine;
+
     constructor() {
         this.engine = new Engine();
     }
@@ -14,13 +16,20 @@ class RuleModel {
      * @param {number|string} value - The value to compare the fact against
      * @param {string} type - The event type (e.g., hot-weather-alert)
      * @param {string} message - The message to include in the event
+     * @returns {RuleProperties} - The constructed rule
      */
-    static create(fact, operator, value, type, message) {
-        const rule = {
+    static create(
+        fact: string,
+        operator: string,
+        value: number | string,
+        type: string,
+        message: string
+    ): RuleProperties {
+        const rule: RuleProperties = {
             conditions: {
                 any: [{
                     fact: fact,
-                    operator: this.mapOperator(operator),
+                    operator: RuleModel.mapOperator(operator),
                     value: value
                 }]
             },
@@ -40,8 +49,8 @@ class RuleModel {
      * @param {string} operator - The operator to map
      * @returns {string} - Mapped operator
      */
-    static mapOperator(operator) {
-        const operatorMap = {
+    private static mapOperator(operator: string): string {
+        const operatorMap: { [key: string]: string } = {
             '>': 'greaterThan',
             '>=': 'greaterThanInclusive',
             '<': 'lessThan',
@@ -55,9 +64,9 @@ class RuleModel {
 
     /**
      * Add rule to engine
-     * @param {Object} rule - The rule to add to the engine
+     * @param {RuleProperties} rule - The rule to add to the engine
      */
-    addRule(rule) {
+    addRule(rule: RuleProperties): void {
         this.engine.addRule(rule);
     }
 
@@ -65,9 +74,9 @@ class RuleModel {
      * Get the engine instance
      * @returns {Engine} - The rule engine instance
      */
-    getEngine() {
+    getEngine(): Engine {
         return this.engine;
     }
 }
 
-module.exports = RuleModel;
+export default RuleModel;
