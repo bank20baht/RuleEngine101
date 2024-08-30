@@ -1,8 +1,8 @@
-// index.js
+// src/index.ts
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const RuleModel = require('./ruleModel');
+import express, { Request, Response } from 'express';
+import bodyParser from 'body-parser';
+import RuleModel from './ruleModel';
 
 const app = express();
 const PORT = 3000;
@@ -17,15 +17,16 @@ const rule2 = RuleModel.create('humidity', '>=', 70, 'high-humidity-alert', 'The
 ruleEngine.addRule(rule1);
 ruleEngine.addRule(rule2);
 
-app.post('/evaluate', async (req, res) => {
+app.post('/evaluate', async (req: Request, res: Response) => {
     const facts = req.body;
 
     try {
         const results = await ruleEngine.getEngine().run(facts);
+        // @ts-ignore
         const events = results.events.map(event => event.params.message);
         res.json({ messages: events });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: (err as Error).message });
     }
 });
 
